@@ -10,30 +10,34 @@ webpush.setVapidDetails('mailto:your@email.com', vapidKeys.publicKey, vapidKeys.
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    return res
-      .status(200)
-      .send('✅ Push Notification API is active. Use POST request to send push.');
+    // This allows browser to visit the link without breaking
+    return res.status(200).send('✅ Push Notification API is active. Use POST to send notifications.');
   }
 
   if (req.method === 'POST') {
-    const subscriptions = fs.existsSync('subscriptions.json')
-      ? JSON.parse(fs.readFileSync('subscriptions.json'))
-      : [];
+    const subscriptionsFile = 'subscriptions.json';
 
     const { title, body, url } = req.body;
     const payload = JSON.stringify({ title, body, url });
 
+    let subscriptions = [];
+    if (fs.existsSync(subscriptionsFile)) {
+      const data = fs.readFileSync(subscriptionsFile);
+      subscriptions = JSON.parse(data);
+    }
+
     for (let sub of subscriptions) {
       try {
         await webpush.sendNotification(sub, payload);
-      } catch (e) {
-        console.error("Push error:", e);
+      } catch (err) {
+        console.error('Push error:', err);
       }
     }
 
-    return res.status(200).json({ message: 'Push sent' });
+    return res.status(200).json({ message: 'Push notifications sent.' });
   }
 
+  // For unsupported methods
   res.setHeader('Allow', ['GET', 'POST']);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }
