@@ -10,11 +10,16 @@ webpush.setVapidDetails('mailto:your@email.com', vapidKeys.publicKey, vapidKeys.
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    return res.status(200).send('✅ Push Notification API is ready. Use POST to send messages.');
+    return res
+      .status(200)
+      .send('✅ Push Notification API is active. Use POST request to send push.');
   }
 
   if (req.method === 'POST') {
-    const subscriptions = fs.existsSync('subscriptions.json') ? JSON.parse(fs.readFileSync('subscriptions.json')) : [];
+    const subscriptions = fs.existsSync('subscriptions.json')
+      ? JSON.parse(fs.readFileSync('subscriptions.json'))
+      : [];
+
     const { title, body, url } = req.body;
     const payload = JSON.stringify({ title, body, url });
 
