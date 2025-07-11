@@ -3,7 +3,7 @@ self.addEventListener('push', function (event) {
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: '/icon.png',
+      icon: '/icon-192.png',
       data: { url: data.url }
     })
   );
@@ -14,6 +14,6 @@ self.addEventListener('notificationclick', function (event) {
   event.waitUntil(clients.openWindow(event.notification.data.url));
 });
 
-self.addEventListener('fetch', function(event) {
-  // Required to enable PWA installability
+self.addEventListener('fetch', function (event) {
+  // Required to make PWA installable
 });
