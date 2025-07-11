@@ -1,0 +1,26 @@
+<script>
+  async function subscribeUser() {
+    const register = await navigator.serviceWorker.register('/sw.js');
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') return;
+
+    const subscription = await register.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: 'BCg2eRfEBXzSxqO6h9mKd1QaDBHuThd_JTxzEoMwrF3mLSV2xctyKATPQdImbWqHNSz6ywhCZhxHYyBC0AaeMq0'
+    });
+
+    await fetch('/api/save-subscription', {
+      method: 'POST',
+      body: JSON.stringify(subscription),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    alert("Subscribed successfully!");
+  }
+
+  if ('serviceWorker' in navigator && 'PushManager' in window) {
+    subscribeUser();
+  }
+</script>
